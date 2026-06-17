@@ -91,7 +91,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
 import { getFirestore, collection, doc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, query, where, getDocs, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
-const firebaseConfig={apiKey:"AIzaSyAP0ITU9ZuHkEpZ8T1SED8kKdTB8nvmbVA",authDomain:"sorteio-kelly.firebaseapp.com",projectId:"sorteio-kelly",storageBucket:"sorteio-kelly.firebasestorage.app",messagingSenderId:"792044241286",appId:"1:792044241286:web:ff417bb6d36625b835ec07"};
+const firebaseConfig={apiKey:"AIzaSyBE1dNYT37n9rBOE2GDKuUidjqxLu1mRls",authDomain:"sorteio-kelly-30eab.firebaseapp.com",projectId:"sorteio-kelly-30eab",storageBucket:"sorteio-kelly-30eab.firebasestorage.app",messagingSenderId:"920453822692",appId:"1:920453822692:web:2883e9ea8ca35a1ce994f1"};
 const app=initializeApp(firebaseConfig);const firestore=getFirestore(app);const ADMIN_PASSWORD='Marjorie06092025';
 const $=id=>document.getElementById(id);let currentSorteioId=null,selectedDezenas=[],sorteios=[],participantes=[],ganhadores=[],activeAdminTab='dashboard',settings={nome:'KELLY SORTEIOS',rodape:'Kelly Menezes',cadastroUrl:''};
 Object.assign(window,{showPage,openParticipar,selecionarDezena,selecionarDezenaPublica,abrirFormularioParticipacao,closeModal,salvarParticipacao,openLogin,loginAdmin,logoutAdmin,adminTab,criarSorteio,toggleSorteio,excluirSorteio,sortearGanhador,sortearGanhadores,salvarAparencia,limparTudo,limparParticipantes,limparGanhadores,filtrarParticipantes,filtrarSelectGanhador,atualizarFiltroDezena,aplicarFiltroGanhador,escolherGanhador});
