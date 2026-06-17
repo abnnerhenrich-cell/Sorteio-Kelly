@@ -159,11 +159,16 @@ function closeModal(id){
 async function loginAdmin(){
   const email = ($('adminEmail')?.value || '').trim().toLowerCase();
   const senha = $('adminSenha')?.value || '';
-  if(!email || !senha) return alert('Preencha e-mail e senha do administrador.');
+
+  if(!email || !senha)
+    return alert('Preencha e-mail e senha do administrador.');
+
   if(!ADMIN_EMAILS.includes(email))
+    return alert('Este e-mail não está autorizado como admin.');
 
   const btn = $('btnEntrarAdmin');
   if(btn){ btn.disabled = true; btn.textContent = 'Entrando...'; }
+
   try{
     await signInWithEmailAndPassword(auth, email, senha);
     closeModal('loginModal');
