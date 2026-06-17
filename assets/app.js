@@ -140,16 +140,12 @@ function openLogin(){
   const email = $('adminEmail');
   const senha = $('adminSenha');
 
-  if(email && !email.value)
-    email.value = '';
+  // Deixa o campo livre para qualquer administrador autorizado digitar o e-mail.
+  if(email && !email.value) email.value = '';
+  if(senha) senha.value = '';
 
-  if(senha)
-    senha.value = '';
-
-  if(modal)
-    modal.classList.remove('hidden');
-
-  setTimeout(() => senha?.focus(), 80);
+  if(modal) modal.classList.remove('hidden');
+  setTimeout(()=>email?.focus(), 80);
 }
 
 function closeModal(id){
@@ -160,11 +156,8 @@ async function loginAdmin(){
   const email = ($('adminEmail')?.value || '').trim().toLowerCase();
   const senha = $('adminSenha')?.value || '';
 
-  if(!email || !senha)
-    return alert('Preencha e-mail e senha do administrador.');
-
-  if(!ADMIN_EMAILS.includes(email))
-    return alert('Este e-mail não está autorizado como admin.');
+  if(!email || !senha) return alert('Preencha e-mail e senha do administrador.');
+  if(!ADMIN_EMAILS.includes(email)) return alert('Este e-mail não está autorizado como admin.');
 
   const btn = $('btnEntrarAdmin');
   if(btn){ btn.disabled = true; btn.textContent = 'Entrando...'; }
@@ -811,21 +804,20 @@ function mostrarErroFirebase(erro, acao='operação'){
 function iniciarAuth(){
   onAuthStateChanged(auth, user => {
     authReady = true;
-    adminLogado = !!(
-  user &&
-  user.email &&
-  ADMIN_EMAILS.includes(user.email.toLowerCase())
-);
+    adminLogado = !!(user && user.email && ADMIN_EMAILS.includes(user.email.toLowerCase()));
+
     if(user && !adminLogado){
       signOut(auth);
       alert('Este login não tem permissão de administrador.');
     }
+
     if(adminLogado){
       closeModal('loginModal');
       if(location.hash === '#admin') showPage('admin');
     }else if(!adminLogado && !($('adminPage')?.classList.contains('hidden'))){
       showPage('home');
     }
+
     renderAll();
   });
 }
