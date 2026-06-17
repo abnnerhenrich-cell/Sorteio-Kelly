@@ -26,7 +26,10 @@ const auth = getAuth(app);
 
 // E-mail autorizado para acessar o painel admin.
 // Crie este usuário no Firebase Authentication > Users.
-const ADMIN_EMAIL = 'kellymenezes.promotorajb@gmail.com';
+const ADMIN_EMAILS = [
+  'kellymenezes.promotorajb@gmail.com',
+  'abnner014@gmail.com'
+];
 
 let currentSorteioId = null;
 let selectedNumeros = [];
