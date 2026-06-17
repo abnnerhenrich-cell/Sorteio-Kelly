@@ -139,10 +139,17 @@ function openLogin(){
   const modal = $('loginModal');
   const email = $('adminEmail');
   const senha = $('adminSenha');
-  if(email && !email.value) email.value = ADMIN_EMAIL;
-  if(senha) senha.value = '';
-  if(modal) modal.classList.remove('hidden');
-  setTimeout(()=>senha?.focus(), 80);
+
+  if(email && !email.value)
+    email.value = '';
+
+  if(senha)
+    senha.value = '';
+
+  if(modal)
+    modal.classList.remove('hidden');
+
+  setTimeout(() => senha?.focus(), 80);
 }
 
 function closeModal(id){
@@ -153,7 +160,7 @@ async function loginAdmin(){
   const email = ($('adminEmail')?.value || '').trim().toLowerCase();
   const senha = $('adminSenha')?.value || '';
   if(!email || !senha) return alert('Preencha e-mail e senha do administrador.');
-  if(email !== ADMIN_EMAIL.toLowerCase()) return alert('Este e-mail não está autorizado como admin.');
+  if(!ADMIN_EMAILS.includes(email))
 
   const btn = $('btnEntrarAdmin');
   if(btn){ btn.disabled = true; btn.textContent = 'Entrando...'; }
@@ -799,7 +806,11 @@ function mostrarErroFirebase(erro, acao='operação'){
 function iniciarAuth(){
   onAuthStateChanged(auth, user => {
     authReady = true;
-    adminLogado = !!(user && user.email && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase());
+    adminLogado = !!(
+  user &&
+  user.email &&
+  ADMIN_EMAILS.includes(user.email.toLowerCase())
+);
     if(user && !adminLogado){
       signOut(auth);
       alert('Este login não tem permissão de administrador.');
