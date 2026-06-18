@@ -12,7 +12,7 @@ const cfg = window.SORTEIO_CONFIG || {tipo:'dezenas',label:'Dezenas',itemName:'d
 // Firebase novo da Kelly - projeto: sorteio-kelly-30eab
 // Este mesmo projeto salva dezenas e centenas em coleções separadas.
 const firebaseConfig = {
-  apiKey: "AIzaSyBE1DNYT37n9rB0E2GDKuUidjqxLu1mRLs",
+  apiKey: "AIzaSyBE1dNYT37n9rBOE2GDKuUidjqxLu1mRls",
   authDomain: "sorteio-kelly-30eab.firebaseapp.com",
   projectId: "sorteio-kelly-30eab",
   storageBucket: "sorteio-kelly-30eab.firebasestorage.app",
