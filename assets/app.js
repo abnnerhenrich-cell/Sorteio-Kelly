@@ -441,12 +441,12 @@ function renderAdmin(){
         ${todosNumeros().map(n => `<option value="${n}">${n}</option>`).join('')}
       </select>
       <div id="resultadoFiltroGanhador" class="notice">Escolha uma ${cfg.itemName} para listar os participantes.</div>
-      <label>Confirmar ganhador manualmente</label>
-      <select id="ganhadorManual">
-        <option value="">Selecione o ganhador</option>
+      <label>Confirmar ganhadores manualmente</label>
+      <select id="ganhadorManual" multiple size="7">
         ${participantes.map(p => `<option value="${p.id}">${escapeHtml(textoNumeros(p))} - ${escapeHtml(p.nome)} | ${escapeHtml(p.sorteioTitulo)}</option>`).join('')}
       </select>
-      <button type="button" class="btn ok" id="btnConfirmarGanhador">🏆 Confirmar Ganhador</button>
+      <div class="notice">Você pode selecionar mais de um participante. No computador, segure Ctrl para escolher vários. No celular, toque e segure ou use a seleção múltipla do navegador.</div>
+      <button type="button" class="btn ok" id="btnConfirmarGanhador">🏆 Confirmar Ganhadores</button>
       <button type="button" class="btn danger" id="btnLimparGanhadores">🗑️ Excluir histórico de ganhadores</button>
     </div><br>${tableGanhadores()}`;
 
@@ -603,29 +603,63 @@ async function limparParticipantes(){
 }
 
 async function sortearGanhador(){
-  const participanteId = $('ganhadorManual')?.value || '';
-  if(!participanteId) return alert('Selecione um participante.');
-  const p = participantes.find(x => x.id === participanteId);
-  if(!p) return alert('Participante não encontrado.');
-  const s = sorteios.find(x => x.id === p.sorteioId);
-  const nums = numerosDoParticipante(p);
-  const ja = ganhadores.some(g => g.participanteId === p.id);
-  if(ja) return alert('Esse participante já está marcado como ganhador.');
+  const select = $('ganhadorManual');
+  const ids = select
+    ? Array.from(select.selectedOptions).map(opt => opt.value).filter(Boolean)
+    : [];
 
-  await addDoc(col('ganhadores'), {
-    tipo: cfg.tipo,
-    participanteId: p.id,
-    nome: p.nome,
-    whats: p.whats,
-    numeros: nums,
-    numero: nums.join(', '),
-    sorteioId: p.sorteioId,
-    sorteioTitulo: p.sorteioTitulo,
-    premio: s?.premio || '',
-    data: new Date().toISOString().slice(0,10),
-    criadoEm: serverTimestamp()
-  });
-  alert('Ganhador confirmado: ' + p.nome);
+  if(!ids.length) return alert('Selecione pelo menos um participante.');
+
+  let salvos = 0;
+  let repetidos = 0;
+  let erros = 0;
+
+  for(const participanteId of ids){
+    const p = participantes.find(x => x.id === participanteId);
+    if(!p){
+      erros++;
+      continue;
+    }
+
+    const s = sorteios.find(x => x.id === p.sorteioId);
+    const nums = numerosDoParticipante(p);
+
+    // Permite vários ganhadores no mesmo sorteio.
+    // Só bloqueia repetir o mesmo participante no mesmo sorteio.
+    const ja = ganhadores.some(g =>
+      g.participanteId === p.id && g.sorteioId === p.sorteioId
+    );
+
+    if(ja){
+      repetidos++;
+      continue;
+    }
+
+    try{
+      await addDoc(col('ganhadores'), {
+        tipo: cfg.tipo,
+        participanteId: p.id,
+        nome: p.nome,
+        whats: p.whats,
+        numeros: nums,
+        numero: nums.join(', '),
+        sorteioId: p.sorteioId,
+        sorteioTitulo: p.sorteioTitulo,
+        premio: s?.premio || '',
+        data: new Date().toISOString().slice(0,10),
+        criadoEm: serverTimestamp()
+      });
+      salvos++;
+    }catch(err){
+      console.error('Erro ao confirmar ganhador:', err);
+      erros++;
+    }
+  }
+
+  let msg = `${salvos} ganhador(es) confirmado(s).`;
+  if(repetidos) msg += ` ${repetidos} já estavam marcados e foram ignorados.`;
+  if(erros) msg += ` ${erros} não puderam ser salvos.`;
+  alert(msg);
 }
 
 async function salvarAparencia(){
